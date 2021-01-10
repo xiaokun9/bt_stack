@@ -39,6 +39,8 @@ static TaskHandle_t AppTaskCreate_Handle = NULL;
 static TaskHandle_t LED1_Task_Handle = NULL;
 /* LED2任务句柄 */
 static TaskHandle_t LED2_Task_Handle = NULL;
+/* LED3任务句柄 */
+static TaskHandle_t LED3_Task_Handle = NULL;
 /********************************** 内核对象句柄 *********************************/
 /*
  * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
@@ -67,7 +69,7 @@ static void AppTaskCreate(void);/* 用于创建任务 */
 
 static void LED1_Task(void* pvParameters);/* LED1_Task任务实现 */
 static void LED2_Task(void* pvParameters);/* LED2_Task任务实现 */
-
+static void LED3_Task(void* pvParameters);/* LED3_Task任务实现 */
 static void BSP_Init(void);/* 用于初始化板载相关资源 */
 
 /*****************************************************************
@@ -84,7 +86,7 @@ int main(void)
 
   /* 开发板硬件初始化 */
   BSP_Init();
-  printf("这是一个[野火]-STM32全系列开发板-FreeRTOS-动态创建多任务实验!\r\n");
+  printf("FreeRTOS-start\r\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -133,7 +135,15 @@ static void AppTaskCreate(void)
                         (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
     printf("创建LED2_Task任务成功!\r\n");
-  
+	/* 创建LED_Task任务 */
+  xReturn = xTaskCreate((TaskFunction_t )LED3_Task, /* 任务入口函数 */
+                        (const char*    )"LED3_Task",/* 任务名字 */
+                        (uint16_t       )512,   /* 任务栈大小 */
+                        (void*          )NULL,	/* 任务入口函数参数 */
+                        (UBaseType_t    )3,	    /* 任务的优先级 */
+                        (TaskHandle_t*  )&LED3_Task_Handle);/* 任务控制块指针 */
+  if(pdPASS == xReturn)
+    printf("创建LED2_Task任务成功!\r\n");  
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
   taskEXIT_CRITICAL();            //退出临界区
@@ -153,11 +163,9 @@ static void LED1_Task(void* parameter)
     {
         LED1_ON;
         vTaskDelay(500);   /* 延时500个tick */
-        //printf("LED1_Task Running,LED1_ON\r\n");
         
         LED1_OFF;     
         vTaskDelay(500);   /* 延时500个tick */		 		
-        //printf("LED1_Task Running,LED1_OFF\r\n");
     }
 }
 
@@ -167,17 +175,35 @@ static void LED1_Task(void* parameter)
   * @ 参数    ：   
   * @ 返回值  ： 无
   ********************************************************************/
+uint8_t buf[4] = {0x01,0x03,0x0c,0x00};
 static void LED2_Task(void* parameter)
 {	
     while (1)
     {
         LED2_ON;
-        vTaskDelay(500);   /* 延时500个tick */
-        //printf("LED2_Task Running,LED2_ON\r\n");
+        vTaskDelay(1000);   /* 延时500个tick */
         
         LED2_OFF;     
+        vTaskDelay(1000);   /* 延时500个tick */	
+//				Usart_SendByte( USART1, 0x01);
+//				Usart_SendByte( USART1, 0x03);
+//				Usart_SendByte( USART1, 0x0c);
+//				Usart_SendByte( USART1, 0x00);
+				Usart_SendArray(USART1,buf,4);
+
+    }
+}
+
+static void LED3_Task(void* parameter)
+{	
+    while (1)
+    {
+        LED3_ON;
+        vTaskDelay(500);   /* 延时500个tick */
+      
+        LED3_OFF;     
         vTaskDelay(500);   /* 延时500个tick */		 		
-        //printf("LED2_Task Running,LED2_OFF\r\n");
+
     }
 }
 /***********************************************************************
@@ -198,9 +224,11 @@ static void BSP_Init(void)
 	/* LED 初始化 */
 	LED_GPIO_Config();
 
-	/* 串口初始化	*/
+	/* UART1	send cmd to bt chip or recv bt chip message*/
 	USART1_Config();
 	NVIC_Configuration();
+	/*UART2 debug*/
+	USART_Config();
   
 }
 
