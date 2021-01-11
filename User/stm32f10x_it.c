@@ -157,15 +157,58 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
-void USART1_IRQHandler(void)
+//void USART1_IRQHandler(void)
+//{
+//	uint8_t ch;
+//	
+//	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+//	{ 	
+//	    //ch = USART1->DR;
+//			ch = USART_ReceiveData(USART1);
+//	  	printf( "%c", ch );    //将接受到的数据直接返回打印
+//	} 
+//	 
+//}
+//串口1接收中断
+extern u8 receivebuf[1024];
+void USART1_IRQHandler(void)                               
+{   
+	uint32_t temp = 0;
+	uint16_t i = 0;
+	
+	if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
+    {
+    	//USART_ClearFlag(USART1,USART_IT_IDLE);
+    	temp = USART1->SR;
+    	temp = USART1->DR; //清USART_IT_IDLE标志
+    	DMA_Cmd(DMA1_Channel5,DISABLE);
+ 
+		temp = 1024 - DMA_GetCurrDataCounter(DMA1_Channel5);
+		for (i = 0;i < temp;i++)
+		{
+			//Data_Receive_Usart = receivebuf[i];
+			printf( "%c", receivebuf[i] );
+		  	//启动串口状态机
+		}
+	
+		//设置传输数据长度
+		DMA_SetCurrDataCounter(DMA1_Channel5,1024);
+    	//打开DMA
+		DMA_Cmd(DMA1_Channel5,ENABLE);
+    } 
+	
+	__nop(); 
+} 
+void USART2_IRQHandler(void)
 {
 	uint8_t ch;
 	
-	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{ 	
 	    //ch = USART1->DR;
-			ch = USART_ReceiveData(USART1);
-	  	printf( "%c", ch );    //将接受到的数据直接返回打印
+			ch = USART_ReceiveData(USART2);
+	  	//printf( "%c", ch );    //将接受到的数据直接返回打印
+			Usart_SendByte( USART1, ch);
 	} 
 	 
 }

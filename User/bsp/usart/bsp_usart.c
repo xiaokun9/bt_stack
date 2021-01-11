@@ -1,6 +1,35 @@
 	#include "bsp_usart.h"
 
+//#include "stm32f10x.h"
+u8 sendbuf[1024];
+u8 receivebuf[1024];
+static void _uart1_dma_configuration()
+{
+  DMA_InitTypeDef DMA_InitStructure;
 
+  /* DMA1 Channel6 (triggered by USART1 Rx event) Config */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 ,
+                        ENABLE);
+
+  /* DMA1 Channel5 (triggered by USART1 Rx event) Config */
+  DMA_DeInit(DMA1_Channel5);
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&USART1->DR);//
+  DMA_InitStructure.DMA_MemoryBaseAddr =(u32)receivebuf;//
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;//
+  DMA_InitStructure.DMA_BufferSize = 1024 ;// 
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable; //
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;//
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte; //
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;// 
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;// 
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;// 
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable; // 
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);// 
+
+  DMA_Cmd(DMA1_Channel5, ENABLE);// 
+
+  USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);//
+}
  /**
   * @brief  USART GPIO 配置,工作参数配置
   * @param  无
@@ -45,9 +74,20 @@ void USART_Config(void)
 	// 完成串口的初始化配置
 	USART_Init(DEBUG_USARTx, &USART_InitStructure);	
 	/* 使能串口1接收中断 */
-	//USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
 	// 使能串口
 	USART_Cmd(DEBUG_USARTx, ENABLE);
+	
+	NVIC_InitTypeDef NVIC_InitStructure; 
+	/* Configure the NVIC Preemption Priority Bits */  
+	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+	
+	/* Enable the USARTy Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;	 
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 void USART1_Config(void)
 {
@@ -77,8 +117,9 @@ void USART1_Config(void)
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART1, &USART_InitStructure);
 	
+	USART_ClearFlag(USART1, USART_FLAG_TC);
 	/* 使能串口1接收中断 */
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);
 	
 	USART_Cmd(USART1, ENABLE);
 }
@@ -96,6 +137,7 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+	_uart1_dma_configuration();
 }
 /*****************  发送一个字节 **********************/
 void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch)

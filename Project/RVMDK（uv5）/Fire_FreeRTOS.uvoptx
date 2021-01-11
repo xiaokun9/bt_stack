@@ -152,9 +152,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>164</LineNumber>
+          <LineNumber>191</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134221622</Address>
+          <Address>134222152</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,55 +163,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\stm32f10x_it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Fire_FreeRTOS\../../User/stm32f10x_it.c\164</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>180</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134221144</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\main.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Fire_FreeRTOS\../../User/main.c\180</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>180</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134221170</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\main.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Fire_FreeRTOS\../../User/main.c\180</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>167</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134221638</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\stm32f10x_it.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Fire_FreeRTOS\../../User/stm32f10x_it.c\167</Expression>
+          <Expression>\\Fire_FreeRTOS\../../User/stm32f10x_it.c\191</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
@@ -732,7 +684,7 @@
 
   <Group>
     <GroupName>FreeRTOS/src</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -832,7 +784,7 @@
       <GroupNumber>6</GroupNumber>
       <FileNumber>44</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\FreeRTOS\port\RVDS\ARM_CM3\port.c</PathWithFileName>

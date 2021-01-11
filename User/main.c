@@ -167,7 +167,7 @@ static void LED2_Task(void* parameter)
 //				Usart_SendByte( USART1, 0x03);
 //				Usart_SendByte( USART1, 0x0c);
 //				Usart_SendByte( USART1, 0x00);
-				Usart_SendArray(USART1,buf,4);
+//				Usart_SendArray(USART1,buf,4);
 
     }
 }
@@ -184,6 +184,7 @@ static void LED3_Task(void* parameter)
 
     }
 }
+
 /***********************************************************************
   * @ 函数名  ： BSP_Init
   * @ 功能说明： 板级外设初始化，所有板子上的初始化均可放在这个函数里面
