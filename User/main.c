@@ -5,6 +5,7 @@
 #include "bsp_led.h"
 #include "bsp_usart.h"
 
+#include "semphr.h"
 /**************************** 任务句柄 ********************************/
 /* 
  * 任务句柄是一个指针，用于指向一个任务，当任务创建好之后，它就具有了一个任务句柄
@@ -37,7 +38,7 @@ static TaskHandle_t LED3_Task_Handle = NULL;
  * 当我们在写应用程序的时候，可能需要用到一些全局变量。
  */
 
-
+SemaphoreHandle_t xSemaphore = NULL;
 /*
 *************************************************************************
 *                             函数声明
@@ -176,12 +177,14 @@ static void LED3_Task(void* parameter)
 {	
     while (1)
     {
+				if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
+				{
         LED3_ON;
         vTaskDelay(500);   /* 延时500个tick */
       
         LED3_OFF;     
         vTaskDelay(500);   /* 延时500个tick */		 		
-
+				}
     }
 }
 
@@ -191,6 +194,7 @@ static void LED3_Task(void* parameter)
   * @ 参数    ：   
   * @ 返回值  ： 无
   *********************************************************************/
+
 static void BSP_Init(void)
 {
 	/*
@@ -208,7 +212,7 @@ static void BSP_Init(void)
 	NVIC_Configuration();
 	/*UART2 debug*/
 	USART_Config();
-  
+  xSemaphore = xSemaphoreCreateBinary();
 }
 
 /********************************END OF FILE****************************/

@@ -169,16 +169,18 @@ void SysTick_Handler(void)
 //	} 
 //	 
 //}
+#include "semphr.h"
 //串口1接收中断
 extern u8 receivebuf[1024];
+extern SemaphoreHandle_t xSemaphore;
 void USART1_IRQHandler(void)                               
 {   
 	uint32_t temp = 0;
 	uint16_t i = 0;
-	
+	static BaseType_t xHigherPriorityTaskWoken;
 	if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
     {
-    	//USART_ClearFlag(USART1,USART_IT_IDLE);
+    	USART_ClearFlag(USART1,USART_IT_IDLE);
     	temp = USART1->SR;
     	temp = USART1->DR; //清USART_IT_IDLE标志
     	DMA_Cmd(DMA1_Channel5,DISABLE);
@@ -196,7 +198,8 @@ void USART1_IRQHandler(void)
     	//打开DMA
 		DMA_Cmd(DMA1_Channel5,ENABLE);
     } 
-	
+		
+	xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
 	__nop(); 
 } 
 void USART2_IRQHandler(void)
