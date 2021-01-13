@@ -59,3 +59,6 @@ typedef struct {
 	uint16_t RFU2:2;
 	uint8_t DATA[0];
 }HCI_ISO_Data_packets_Struct;
+
+
+void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data);

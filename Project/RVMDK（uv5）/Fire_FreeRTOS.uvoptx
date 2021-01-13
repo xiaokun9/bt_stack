@@ -145,7 +145,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>-UAny -O206 -S8 -C0 -P00 -N00("") -D00(00000000) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F103ZE$Flash\STM32F10x_512.FLM)</Name>
+          <Name>-UAny -O206 -S8 -C0 -P00 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F103ZE$Flash\STM32F10x_512.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -154,7 +154,7 @@
           <Type>0</Type>
           <LineNumber>199</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222226</Address>
+          <Address>134222262</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -164,6 +164,22 @@
           <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\stm32f10x_it.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\Fire_FreeRTOS\../../User/stm32f10x_it.c\199</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>221</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134221930</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>F:\鍩轰簬STM32F103_闇搁亾_寮€鍙戞澘\ebf_freertos_base_code_stm32f103_badao\14-3锛孲RAM鍔ㄦ€佸垱寤哄浠诲姟\github\bt_stack\Project\User\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\Fire_FreeRTOS\../../User/main.c\221</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>

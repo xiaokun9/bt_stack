@@ -6,6 +6,9 @@
 #include "bsp_usart.h"
 
 #include "semphr.h"
+#include "bt_pack_unpack.h"
+#include <stdio.h>
+#include <string.h>
 /**************************** 任务句柄 ********************************/
 /* 
  * 任务句柄是一个指针，用于指向一个任务，当任务创建好之后，它就具有了一个任务句柄
@@ -39,6 +42,7 @@ static TaskHandle_t LED3_Task_Handle = NULL;
  */
 
 SemaphoreHandle_t xSemaphore = NULL;
+extern u8 receivebuf[1024];
 /*
 *************************************************************************
 *                             函数声明
@@ -181,9 +185,13 @@ static void LED3_Task(void* parameter)
 				{
         LED3_ON;
         vTaskDelay(500);   /* 延时500个tick */
-      
+				if (*receivebuf == HCI_EVENT_PACK) { //HCI EVENT
+					printf("11111111111");
+				}
         LED3_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */		 		
+        vTaskDelay(500);   /* 延时500个tick */	
+				//receivebuf
+				memset(receivebuf,0,1024);					
 				}
     }
 }
@@ -213,6 +221,13 @@ static void BSP_Init(void)
 	/*UART2 debug*/
 	USART_Config();
   xSemaphore = xSemaphoreCreateBinary();
+	
+	//test cmd
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x03;
+	data.OGF = 0x03;
+	data.LEN = 0;
+	Send_HCI_Command_Packet(data);
 }
 
 /********************************END OF FILE****************************/
