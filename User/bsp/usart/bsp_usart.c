@@ -2,7 +2,7 @@
 
 //#include "stm32f10x.h"
 u8 sendbuf[1024];
-u8 receivebuf[1024];
+uint8_t receivebuf[1024];
 static void _uart1_dma_configuration()
 {
   DMA_InitTypeDef DMA_InitStructure;

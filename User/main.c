@@ -42,7 +42,7 @@ static TaskHandle_t LED3_Task_Handle = NULL;
  */
 
 SemaphoreHandle_t xSemaphore = NULL;
-extern u8 receivebuf[1024];
+extern uint8_t receivebuf[1024];
 /*
 *************************************************************************
 *                             函数声明
@@ -185,7 +185,15 @@ static void LED3_Task(void* parameter)
 				{
         LED3_ON;
         vTaskDelay(500);   /* 延时500个tick */
-				if (*receivebuf == HCI_EVENT_PACK) { //HCI EVENT
+				uint8_t* temp_addr = receivebuf;
+				uint8_t temp_char = *temp_addr;
+				if (temp_char == HCI_EVENT_PACK) { //HCI EVENT
+					temp_addr++;
+					uint8_t index = *(temp_addr);
+					temp_addr++;
+					if (index >0 && index < 100) {
+						HCI_Event_Handle_Index(index,temp_addr + 2,*(temp_addr));
+					}
 					printf("11111111111");
 				}
         LED3_OFF;     
@@ -221,7 +229,7 @@ static void BSP_Init(void)
 	/*UART2 debug*/
 	USART_Config();
   xSemaphore = xSemaphoreCreateBinary();
-	
+	bt_stack_init();
 	//test cmd
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x03;
