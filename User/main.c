@@ -192,7 +192,8 @@ static void LED3_Task(void* parameter)
 					uint8_t index = *(temp_addr);
 					temp_addr++;
 					if (index >0 && index < 100) {
-						HCI_Event_Handle_Index(index,temp_addr + 2,*(temp_addr));
+						
+						HCI_Event_Handle_Index(index,temp_addr + 1, *(temp_addr));
 					}
 					printf("11111111111");
 				}

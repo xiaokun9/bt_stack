@@ -14,7 +14,13 @@ void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data)
 
 void HCI_Command_Complete_Event_Handle(uint8_t *buffer, uint32_t len)
 {
-	
+	uint8_t Num_HCI_Command_Packets = *buffer++;
+	uint16_t OGF = (*buffer) | ((*(buffer+1) &0x03) << 8);
+	uint8_t OCF = *(buffer + 1) >> 2;
+	buffer = buffer + 2;
+	uint8_t Return_Parameter = *buffer;
+
+	printf("%d,%d,%d,%d",Num_HCI_Command_Packets,OGF,Return_Parameter,OCF);
 }
 
 void bt_stack_init(void)
