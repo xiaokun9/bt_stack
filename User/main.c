@@ -126,7 +126,7 @@ static void AppTaskCreate(void)
                         (UBaseType_t    )3,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED3_Task_Handle);/* 任务控制块指针 */
   if(pdPASS == xReturn)
-    printf("创建LED2_Task任务成功!\r\n");  
+    printf("创建LED3_Task任务成功!\r\n");  
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
   taskEXIT_CRITICAL();            //退出临界区
@@ -195,7 +195,7 @@ static void LED3_Task(void* parameter)
 						
 						HCI_Event_Handle_Index(index,temp_addr + 1, *(temp_addr));
 					}
-					printf("11111111111");
+					//printf("11111111111");
 				}
         LED3_OFF;     
         vTaskDelay(500);   /* 延时500个tick */	
@@ -232,11 +232,11 @@ static void BSP_Init(void)
   xSemaphore = xSemaphoreCreateBinary();
 	bt_stack_init();
 	//test cmd
-	HCI_Command_Packet_Struct data;
-	data.OCF = 0x03;
-	data.OGF = 0x03;
-	data.LEN = 0;
-	Send_HCI_Command_Packet(data);
+//	HCI_Command_Packet_Struct data;
+//	data.OCF = 0x03;
+//	data.OGF = 0x03;
+//	data.LEN = 0;
+//	Send_HCI_Command_Packet(data);
 }
 
 /********************************END OF FILE****************************/

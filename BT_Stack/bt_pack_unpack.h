@@ -103,7 +103,7 @@ typedef struct {
 	uint16_t OCF:10;
 	uint16_t OGF:6;
 	uint8_t LEN:8;
-	uint8_t DATA[0];
+	uint8_t *DATA;
 }HCI_Command_Packet_Struct;
 
 typedef struct {
@@ -137,6 +137,15 @@ typedef struct {
 	uint16_t RFU2:2;
 	uint8_t DATA[0];
 }HCI_ISO_Data_packets_Struct;
+
+
+typedef struct {
+	uint8_t  loacl_addr[6];
+	uint16_t acl_data_packet_length;
+	uint8_t  sco_data_packet_length;
+	uint16_t total_num_acl_data_packets;
+	uint16_t total_num_sco_data_packets;
+}HCI_STATUS_Struct;
 
 typedef void (*HCI_Event_Handle_Fun)(uint8_t *buffer, uint32_t len);
 
