@@ -199,7 +199,7 @@ void USART1_IRQHandler(void)
 		DMA_Cmd(DMA1_Channel5,ENABLE);
     } 
 		
-	xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
+	//xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
 	__nop(); 
 } 
 void USART2_IRQHandler(void)

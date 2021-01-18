@@ -99,6 +99,13 @@ typedef enum {
 	HCI_SAM_Status_Change_Event = 0x58,
 	
 }HCI_Chip_Event_TYPE;
+
+typedef enum {
+	SCAN_UNDISCOVER_UNCONNECT = 0x00,
+	SCAN_DISCOVER_UNCONNECT = 0x01,
+	SCAN_UNDISCOVER_CONNECT = 0x02,
+	SCAN_DISCOVER_CONNECT = 0x03,
+}scan_mode;
 typedef struct {
 	uint16_t OCF:10;
 	uint16_t OGF:6;
@@ -138,11 +145,23 @@ typedef struct {
 	uint8_t DATA[0];
 }HCI_ISO_Data_packets_Struct;
 
+typedef struct {
+	uint8_t byte0;
+	uint8_t byte1;
+	uint8_t byte2;
+	uint8_t byte3;
+	uint8_t byte4;
+	uint8_t byte5;
+	uint8_t byte6;
+	uint8_t byte7;
+}HCI_Support_Feature;
+
 
 typedef struct {
 	uint8_t  loacl_addr[6];
-	uint16_t acl_data_packet_length;
+	HCI_Support_Feature hci_support_feature;// 8 byte
 	uint8_t  sco_data_packet_length;
+	uint16_t acl_data_packet_length;
 	uint16_t total_num_acl_data_packets;
 	uint16_t total_num_sco_data_packets;
 }HCI_STATUS_Struct;

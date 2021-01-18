@@ -25,17 +25,80 @@ void HCI_Command_Complete_Event_Handle(uint8_t *buffer, uint32_t len)
 	buffer++;
 	if (OGF == 0x03){ // CONTROLLER & BASEBAND COMMANDS
 		switch(OCF) {
+			case 0x01://HCI_Set_Event_Mask
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Set_Event_Mask fail\r\n");
+				}
+				break;
 			case 0x03://HCI Reset
 				if ( Return_Parameter != 0x00) {
 					printf("HCI Cmd Exec hci Reset\r\n");
 				}
 				break;
-			case 0x04:
-				
+			case 0x13: // HCI_Write_Local_Name
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Local_Name Fail\r\n");
+				}
+				break;
+			case 0x18: // HCI_Write_Page_Timeout
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Page_Timeout Fail\r\n");
+				}
+				break;	
+			case 0x1A: // HCI_Write_Scan_Enable
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Scan_Enable Fail\r\n");
+				}
+				break;
+			case 0x1C: // HCI_Write_Page_Scan_Activity
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Page_Scan_Activity Fail\r\n");
+				}
+				break;
+			case 0x1E: // HCI_Write_Inquiry_Scan_Activity
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Inquiry_Scan_Activity Fail\r\n");
+				}
+				break;
+			case 0x20: // HCI_Write_Authentication_Enable
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Authentication_Enable Fail\r\n");
+				}
+				break;
+			case 0x24: // HCI_Write_Class_Of_Device
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Class_Of_Device Fail\r\n");
+				}
+				break;		
+			case 0x45: // HCI_Write_Inquiry_Mode
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Write_Inquiry_Mode Fail\r\n");
+				}
 				break;
 		}
 	} else if (OGF == 0x04) {
 		switch(OCF) {
+			case 0x03:
+			if ( Return_Parameter == 0x00) {
+					g_Hci_Status.hci_support_feature.byte0 = *buffer;// HCI_Read_Local_Supported_Features
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte1 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte2 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte3 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte4 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte5 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte6 = *buffer;
+					buffer++;
+					g_Hci_Status.hci_support_feature.byte7 = *buffer;
+				} else {
+					printf("HCI_Read_Local_Supported_Features Fail\r\n");
+				}
+			break;
 			case 0x05:
 			if ( Return_Parameter == 0x00) {
 					g_Hci_Status.acl_data_packet_length = *(buffer + 1)<<8 | (*buffer);// Buffer size
@@ -142,7 +205,7 @@ static void Send_HCI_vendor_Radio_test_Cmd(void)
 	data.OCF = 0x00;
 	data.OGF = 0x3F;
 	data.LEN = 0x13;
-	uint8_t array[] = {0x01,0x00,0xFC,0x13,0xC2,0x02,0x00,0x09,0x00,0xA0,0x00,0x04,0x50,0x00,0x00,0x1D,0x00,0x3A,0x00,0x00,0x00,0x00,0x00};
+	uint8_t array[] = {0xC2,0x02,0x00,0x09,0x00,0xA0,0x00,0x04,0x50,0x00,0x00,0x1D,0x00,0x3A,0x00,0x00,0x00,0x00,0x00};
 	data.DATA = array;
 	Send_HCI_Command_Packet(data);
 }
@@ -156,7 +219,7 @@ static void Send_HCI_Command_Reset(void)
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x03;
 	data.OGF = 0x03;
-	data.LEN = 0;
+	data.LEN = 0x00;
 	Send_HCI_Command_Packet(data);
 }
 // vendor-specific
@@ -176,7 +239,7 @@ static void Send_HCI_Command_Read_Local_Addr(void)
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x09;
 	data.OGF = 0x04;
-	data.LEN = 0;
+	data.LEN = 0x00;
 	Send_HCI_Command_Packet(data);
 }
 // HCI_read BTC buffer size
@@ -185,7 +248,124 @@ static void Send_HCI_Command_Read_Buffer_Size(void)
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x05;
 	data.OGF = 0x04;
-	data.LEN = 0;
+	data.LEN = 0x00;
+	Send_HCI_Command_Packet(data);
+}
+
+// HCI_read Local Supported Feature
+static void Send_HCI_Command_Read_Local_Supported_Feature(void)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x03;
+	data.OGF = 0x04;
+	data.LEN = 0x00;
+	Send_HCI_Command_Packet(data);
+}
+//Set Event Mask command
+static void Send_HCI_Command_Set_Event_Mask(void)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x01;
+	data.OGF = 0x03;
+	data.LEN = 0x08;
+	uint8_t array[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xBF,0x3D};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+//HCI_Write_Page_Timeout
+static void Send_HCI_Command_Write_Page_Timeout(void)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x18;
+	data.OGF = 0x03;
+	data.LEN = 0x02;
+	uint8_t array[] = {0x00,0x20};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Class_Of_Device
+static void Send_HCI_Command_Write_Class_Of_Device(void)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x24;
+	data.OGF = 0x03;
+	data.LEN = 0x03;
+	uint8_t array[] = {0x08,0x04,0x20};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Authentication_Enable
+static void Send_HCI_Command_Write_Authentication_Enable(uint8_t isEnable)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x20;
+	data.OGF = 0x03;
+	data.LEN = 0x01;
+	uint8_t array[] = {0x00};
+	if (isEnable != 0)
+	{
+		array[0] = 0x01;
+	}
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Inquiry_Scan_Activity
+static void Send_HCI_Command_Write_Inquiry_Scan_Activity()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x1E;
+	data.OGF = 0x03;
+	data.LEN = 0x04;
+	uint8_t array[] = {0x00,0x10,0x12,0x00};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Page_Scan_Activity
+static void Send_HCI_Command_Write_Page_Scan_Activity()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x1C;
+	data.OGF = 0x03;
+	data.LEN = 0x04;
+	uint8_t array[] = {0x00,0x08,0x12,0x00};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Inquiry_Mode
+static void Send_HCI_Command_Write_Inquiry_Mode()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x45;
+	data.OGF = 0x03;
+	data.LEN = 0x01;
+	uint8_t array[] = {0x02};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+// HCI_Write_Local_Name
+static void Send_HCI_Command_Write_Local_Name()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x13;
+	data.OGF = 0x03;
+	data.LEN = 0xF8;
+	uint8_t array[248] = {"My Bt Stack"};
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+
+
+
+
+// HCI_Write_Scan_Enable
+static void Send_HCI_Command_Write_Scan_Enable(scan_mode mode)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x1A;
+	data.OGF = 0x03;
+	data.LEN = 0x01;
+	uint8_t array[] = {mode};
+	data.DATA = array;
 	Send_HCI_Command_Packet(data);
 }
 void bt_stack_init(void)
@@ -196,7 +376,17 @@ void bt_stack_init(void)
 	Send_HCI_vendor_Cmd();
 	Send_HCI_Command_Read_Local_Addr();//read local addr
 	Send_HCI_Command_Read_Buffer_Size();// read buffer size
-	
+	Send_HCI_Command_Read_Local_Supported_Feature();// HCI_Read_Local_Supported_Features
+	Send_HCI_Command_Set_Event_Mask();// HCI_Set_Event_Mask
+	Send_HCI_Command_Write_Page_Timeout();// HCI_Write_Page_Timeout   5.12s
+	Send_HCI_Command_Write_Class_Of_Device(); // HCI_Write_Class_Of_Device  0x200408
+	Send_HCI_Command_Write_Authentication_Enable(0x00);// HCI_Write_Authentication_Enable close
+	Send_HCI_Command_Write_Inquiry_Scan_Activity();// HCI_Write_Inquiry_Scan_Activity
+	Send_HCI_Command_Write_Page_Scan_Activity(); // HCI_Write_Page_Scan_Activity 
+	Send_HCI_Command_Write_Inquiry_Mode();// HCI_Write_Inquiry_Mode
+
+	Send_HCI_Command_Write_Local_Name(); // HCI_Write_Local_Name
+	Send_HCI_Command_Write_Scan_Enable(SCAN_DISCOVER_CONNECT);// Send_HCI_Command_Write_Scan_Enable
 }
 
 void HCI_Event_Handle_Index(uint8_t index,uint8_t *buffer, uint32_t len)

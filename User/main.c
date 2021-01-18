@@ -184,13 +184,13 @@ static void LED3_Task(void* parameter)
 				if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
 				{
         LED3_ON;
-        vTaskDelay(500);   /* 延时500个tick */
+        //vTaskDelay(500);   /* 延时500个tick */
 				uint8_t* temp_addr = receivebuf;
 				uint8_t temp_char = *temp_addr;
 				if (temp_char == HCI_EVENT_PACK) { //HCI EVENT
-					temp_addr++;
+					temp_addr =temp_addr + 1;
 					uint8_t index = *(temp_addr);
-					temp_addr++;
+					temp_addr =temp_addr + 1;
 					if (index >0 && index < 100) {
 						
 						HCI_Event_Handle_Index(index,temp_addr + 1, *(temp_addr));
@@ -198,7 +198,7 @@ static void LED3_Task(void* parameter)
 					//printf("11111111111");
 				}
         LED3_OFF;     
-        vTaskDelay(500);   /* 延时500个tick */	
+        //vTaskDelay(500);   /* 延时500个tick */	
 				//receivebuf
 				memset(receivebuf,0,1024);					
 				}
