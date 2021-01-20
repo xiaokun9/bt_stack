@@ -4,7 +4,7 @@
 
 HCI_Event_Handle_Fun HCI_Event_Fun[100] = {NULL};
 HCI_STATUS_Struct g_Hci_Status;
-
+static uint16_t g_HCI_Cmd_Exec_Next_Num = 0;
 
 void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data)
 {
@@ -69,7 +69,12 @@ void HCI_Command_Complete_Event_Handle(uint8_t *buffer, uint32_t len)
 				if ( Return_Parameter != 0x00) {
 					printf("HCI_Write_Class_Of_Device Fail\r\n");
 				}
-				break;		
+				break;
+			case 0x33: // HCI_Host_Buffer_Size
+				if ( Return_Parameter != 0x00) {
+					printf("HCI_Host_Buffer_Size Fail\r\n");
+				}
+				break;				
 			case 0x45: // HCI_Write_Inquiry_Mode
 				if ( Return_Parameter != 0x00) {
 					printf("HCI_Write_Inquiry_Mode Fail\r\n");
@@ -78,6 +83,21 @@ void HCI_Command_Complete_Event_Handle(uint8_t *buffer, uint32_t len)
 		}
 	} else if (OGF == 0x04) {
 		switch(OCF) {
+			case 0x01:
+			if ( Return_Parameter == 0x00) { // HCI_Read_Local_Version_Information
+					g_Hci_Status.HCI_Version = (uint8_t)(*buffer);
+					buffer++;
+					g_Hci_Status.HCI_Revision = (uint8_t)(*buffer) | (uint8_t)(*(buffer + 1)) << 8;
+					buffer = buffer + 2;
+					g_Hci_Status.LMP_PAL_Version = (uint8_t)(*buffer);
+					buffer++;
+					g_Hci_Status.Manufacturer_Name = (uint8_t)(*buffer) | (uint8_t)(*(buffer + 1)) << 8;
+					buffer = buffer + 2;
+					g_Hci_Status.LMP_PAL_Subversion = (uint8_t)(*buffer) | (uint8_t)(*(buffer + 1)) << 8;
+				} else {
+					printf("HCI_Read_Local_Version_Information Fail\r\n");
+				}
+			break;
 			case 0x03:
 			if ( Return_Parameter == 0x00) {
 					g_Hci_Status.hci_support_feature.byte0 = *buffer;// HCI_Read_Local_Supported_Features
@@ -223,16 +243,16 @@ static void Send_HCI_Command_Reset(void)
 	Send_HCI_Command_Packet(data);
 }
 // vendor-specific
-static void Send_HCI_vendor_Cmd(void)
-{
-	Send_HCI_vendor_Set_Freq_Cmd();
-	Send_HCI_vendor_HOST_H4_Cmd();
-	Send_HCI_vendor_UART_CONFIG_Cmd();
-	Send_HCI_vendor_PSKEY_BDADDR_Cmd();
-	Send_HCI_vendor_UART_BITRATE_Cmd();
-	Send_HCI_vendor_Warm_Reset_Cmd();
-	Send_HCI_vendor_Radio_test_Cmd();
-}
+//static void Send_HCI_vendor_Cmd(void)
+//{
+//	Send_HCI_vendor_Set_Freq_Cmd();
+//	Send_HCI_vendor_HOST_H4_Cmd();
+//	Send_HCI_vendor_UART_CONFIG_Cmd();
+//	Send_HCI_vendor_PSKEY_BDADDR_Cmd();
+//	Send_HCI_vendor_UART_BITRATE_Cmd();
+//	Send_HCI_vendor_Warm_Reset_Cmd();
+//	Send_HCI_vendor_Radio_test_Cmd();
+//}
 // HCI_read local addr
 static void Send_HCI_Command_Read_Local_Addr(void)
 {
@@ -290,22 +310,18 @@ static void Send_HCI_Command_Write_Class_Of_Device(void)
 	data.OCF = 0x24;
 	data.OGF = 0x03;
 	data.LEN = 0x03;
-	uint8_t array[] = {0x08,0x04,0x20};
+	uint8_t array[] = {0x04,0x04,0x20};
 	data.DATA = array;
 	Send_HCI_Command_Packet(data);
 }
 // HCI_Write_Authentication_Enable
-static void Send_HCI_Command_Write_Authentication_Enable(uint8_t isEnable)
+static void Send_HCI_Command_Write_Authentication_Enable()
 {
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x20;
 	data.OGF = 0x03;
 	data.LEN = 0x01;
 	uint8_t array[] = {0x00};
-	if (isEnable != 0)
-	{
-		array[0] = 0x01;
-	}
 	data.DATA = array;
 	Send_HCI_Command_Packet(data);
 }
@@ -354,44 +370,97 @@ static void Send_HCI_Command_Write_Local_Name()
 	Send_HCI_Command_Packet(data);
 }
 
+// HCI_Host_Buffer_Size
+static void Send_HCI_Command_Host_Buffer_Size()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x33;
+	data.OGF = 0x03;
+	data.LEN = 0x07;
+	uint8_t array[0x07] = {};
+	array[0] = (uint8_t)(g_Hci_Status.host_acl_data_packet_length);
+	array[1] = (uint8_t)(g_Hci_Status.host_acl_data_packet_length >> 8);
+	array[2] = (uint8_t)(g_Hci_Status.host_sco_data_packet_length);
+	array[3] = (uint8_t)(g_Hci_Status.host_total_num_acl_data_packets);
+	array[4] = (uint8_t)(g_Hci_Status.host_total_num_acl_data_packets >> 8);
+	array[5] = (uint8_t)(g_Hci_Status.host_total_num_sco_data_packets);
+	array[6] = (uint8_t)(g_Hci_Status.host_total_num_sco_data_packets >> 8);
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
 
-
-
+// HCI_Read_Local_Version_Information
+static void Send_HCI_Command_Read_Local_Version_Information()
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x01;
+	data.OGF = 0x04;
+	data.LEN = 0x00;
+	data.DATA = NULL;
+	Send_HCI_Command_Packet(data);
+}
 // HCI_Write_Scan_Enable
-static void Send_HCI_Command_Write_Scan_Enable(scan_mode mode)
+static void Send_HCI_Command_Write_Scan_Enable()
 {
 	HCI_Command_Packet_Struct data;
 	data.OCF = 0x1A;
 	data.OGF = 0x03;
 	data.LEN = 0x01;
-	uint8_t array[] = {mode};
+	uint8_t array[] = {SCAN_DISCOVER_CONNECT};
 	data.DATA = array;
 	Send_HCI_Command_Packet(data);
 }
+
 void bt_stack_init(void)
 {
 	HCI_Event_Fun[HCI_Command_Complete_Event] = HCI_Command_Complete_Event_Handle;
-	
-	Send_HCI_Command_Reset();//reset
-	Send_HCI_vendor_Cmd();
-	Send_HCI_Command_Read_Local_Addr();//read local addr
-	Send_HCI_Command_Read_Buffer_Size();// read buffer size
-	Send_HCI_Command_Read_Local_Supported_Feature();// HCI_Read_Local_Supported_Features
-	Send_HCI_Command_Set_Event_Mask();// HCI_Set_Event_Mask
-	Send_HCI_Command_Write_Page_Timeout();// HCI_Write_Page_Timeout   5.12s
-	Send_HCI_Command_Write_Class_Of_Device(); // HCI_Write_Class_Of_Device  0x200408
-	Send_HCI_Command_Write_Authentication_Enable(0x00);// HCI_Write_Authentication_Enable close
-	Send_HCI_Command_Write_Inquiry_Scan_Activity();// HCI_Write_Inquiry_Scan_Activity
-	Send_HCI_Command_Write_Page_Scan_Activity(); // HCI_Write_Page_Scan_Activity 
-	Send_HCI_Command_Write_Inquiry_Mode();// HCI_Write_Inquiry_Mode
+	g_Hci_Status.host_sco_data_packet_length = 255;
+	g_Hci_Status.host_acl_data_packet_length = 1024;
+	g_Hci_Status.host_total_num_acl_data_packets = 20;
+	g_Hci_Status.host_total_num_sco_data_packets = 10;
 
-	Send_HCI_Command_Write_Local_Name(); // HCI_Write_Local_Name
-	Send_HCI_Command_Write_Scan_Enable(SCAN_DISCOVER_CONNECT);// Send_HCI_Command_Write_Scan_Enable
+	Send_HCI_Command_Reset();//reset
 }
 
 void HCI_Event_Handle_Index(uint8_t index,uint8_t *buffer, uint32_t len)
 {
 	if (HCI_Event_Fun[index] != NULL) {
 		HCI_Event_Fun[index](buffer,len);
+	}
+}
+
+HCI_Cmd_Callback g_HCI_Cmd_Callback[] = {
+	//Send_HCI_vendor_Cmd,
+	// vendor-specific
+	Send_HCI_vendor_Set_Freq_Cmd,
+	Send_HCI_vendor_HOST_H4_Cmd,
+	Send_HCI_vendor_UART_CONFIG_Cmd,
+	Send_HCI_vendor_PSKEY_BDADDR_Cmd,
+	Send_HCI_vendor_UART_BITRATE_Cmd,
+	Send_HCI_vendor_Warm_Reset_Cmd,
+	Send_HCI_vendor_Radio_test_Cmd,
+	/********************************************/
+	Send_HCI_Command_Read_Local_Addr,//read local addr
+	Send_HCI_Command_Read_Buffer_Size,// read buffer size
+	Send_HCI_Command_Host_Buffer_Size,// Host Buffer Size
+	Send_HCI_Command_Read_Local_Version_Information,// HCI_Read_Local_Version_Information
+	Send_HCI_Command_Read_Local_Supported_Feature,// HCI_Read_Local_Supported_Features
+	Send_HCI_Command_Set_Event_Mask,// HCI_Set_Event_Mask
+	Send_HCI_Command_Write_Page_Timeout,// HCI_Write_Page_Timeout   5.12s
+	Send_HCI_Command_Write_Class_Of_Device, // HCI_Write_Class_Of_Device  0x200408
+	Send_HCI_Command_Write_Authentication_Enable,// HCI_Write_Authentication_Enable close
+	Send_HCI_Command_Write_Inquiry_Scan_Activity,// HCI_Write_Inquiry_Scan_Activity
+	Send_HCI_Command_Write_Page_Scan_Activity, // HCI_Write_Page_Scan_Activity
+	Send_HCI_Command_Write_Inquiry_Mode,// HCI_Write_Inquiry_Mode
+	Send_HCI_Command_Write_Local_Name, // HCI_Write_Local_Name
+	Send_HCI_Command_Write_Scan_Enable,// Send_HCI_Command_Write_Scan_Enable
+};
+
+void HCI_Cmd_Exec_Next(void)
+{
+	if(g_HCI_Cmd_Exec_Next_Num < sizeof(g_HCI_Cmd_Callback)/sizeof(HCI_Cmd_Callback)) {
+		HCI_Cmd_Callback temp = g_HCI_Cmd_Callback[g_HCI_Cmd_Exec_Next_Num];
+		if (temp != NULL) temp();
+		g_HCI_Cmd_Exec_Next_Num++;
 	}
 }

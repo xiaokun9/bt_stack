@@ -69,7 +69,7 @@ int main(void)
 
   /* 开发板硬件初始化 */
   BSP_Init();
-  printf("FreeRTOS-start\r\n");
+  //printf("FreeRTOS-start\r\n");
    /* 创建AppTaskCreate任务 */
   xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
                         (const char*    )"AppTaskCreate",/* 任务名字 */
@@ -106,8 +106,8 @@ static void AppTaskCreate(void)
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )2,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED1_Task_Handle);/* 任务控制块指针 */
-  if(pdPASS == xReturn)
-    printf("创建LED1_Task任务成功!\r\n");
+//  if(pdPASS == xReturn)
+//    printf("创建LED1_Task任务成功!\r\n");
   
 	/* 创建LED_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
@@ -116,8 +116,8 @@ static void AppTaskCreate(void)
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )3,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED2_Task_Handle);/* 任务控制块指针 */
-  if(pdPASS == xReturn)
-    printf("创建LED2_Task任务成功!\r\n");
+//  if(pdPASS == xReturn)
+//    printf("创建LED2_Task任务成功!\r\n");
 	/* 创建LED_Task任务 */
   xReturn = xTaskCreate((TaskFunction_t )LED3_Task, /* 任务入口函数 */
                         (const char*    )"LED3_Task",/* 任务名字 */
@@ -125,8 +125,8 @@ static void AppTaskCreate(void)
                         (void*          )NULL,	/* 任务入口函数参数 */
                         (UBaseType_t    )3,	    /* 任务的优先级 */
                         (TaskHandle_t*  )&LED3_Task_Handle);/* 任务控制块指针 */
-  if(pdPASS == xReturn)
-    printf("创建LED3_Task任务成功!\r\n");  
+//  if(pdPASS == xReturn)
+//    printf("创建LED3_Task任务成功!\r\n");  
   vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
   
   taskEXIT_CRITICAL();            //退出临界区
@@ -179,6 +179,7 @@ static void LED2_Task(void* parameter)
 
 static void LED3_Task(void* parameter)
 {	
+		bt_stack_init();
     while (1)
     {
 				if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
@@ -195,7 +196,8 @@ static void LED3_Task(void* parameter)
 						
 						HCI_Event_Handle_Index(index,temp_addr + 1, *(temp_addr));
 					}
-					//printf("11111111111");
+					//
+					HCI_Cmd_Exec_Next();
 				}
         LED3_OFF;     
         //vTaskDelay(500);   /* 延时500个tick */	
@@ -230,7 +232,7 @@ static void BSP_Init(void)
 	/*UART2 debug*/
 	USART_Config();
   xSemaphore = xSemaphoreCreateBinary();
-	bt_stack_init();
+//	bt_stack_init();
 	//test cmd
 //	HCI_Command_Packet_Struct data;
 //	data.OCF = 0x03;

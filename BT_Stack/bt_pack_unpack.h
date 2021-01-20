@@ -164,10 +164,25 @@ typedef struct {
 	uint16_t acl_data_packet_length;
 	uint16_t total_num_acl_data_packets;
 	uint16_t total_num_sco_data_packets;
+	
+	uint8_t  host_sco_data_packet_length;
+	uint16_t host_acl_data_packet_length;
+	uint16_t host_total_num_acl_data_packets;
+	uint16_t host_total_num_sco_data_packets;
+	
+	//version
+	uint8_t HCI_Version;
+	uint16_t HCI_Revision;
+	uint8_t LMP_PAL_Version;
+	uint16_t Manufacturer_Name;
+	uint16_t LMP_PAL_Subversion;
+	
 }HCI_STATUS_Struct;
 
 typedef void (*HCI_Event_Handle_Fun)(uint8_t *buffer, uint32_t len);
+typedef void (*HCI_Cmd_Callback)(void);
 
+void HCI_Cmd_Exec_Next(void);
 void bt_stack_init(void);
 void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data);
 void HCI_Event_Handle_Index(uint8_t index,uint8_t *buffer, uint32_t len);
