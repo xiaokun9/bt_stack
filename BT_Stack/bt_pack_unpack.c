@@ -15,6 +15,49 @@ void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data)
 		Usart_SendArray( USART1,data.DATA,data.LEN);
 }
 
+// HCI_Accept_Connection_Request
+static void Send_HCI_Command_Accept_Connection_Request(void)
+{
+	HCI_Command_Packet_Struct data;
+	data.OCF = 0x09;
+	data.OGF = 0x01;
+	data.LEN = 0x07;
+	uint8_t array[0x07] = {};
+	memcpy(array,g_Hci_Status.remote_addr,6);
+	array[0x06] = 0x01; // role:slave
+	data.DATA = array;
+	Send_HCI_Command_Packet(data);
+}
+
+void HCI_Connection_Request_Event_Handle(uint8_t *buffer, uint32_t len)
+{
+	if(len != 10) {	
+		return;
+	}
+//	for(int i = 0;i < 6;i++) {
+//		g_Hci_Status.remote_addr[i] = *(buffer + 5 - i);
+//	}
+	memcpy(g_Hci_Status.remote_addr,buffer,6);
+	
+	buffer += 6;
+	g_Hci_Status.remote_class_of_device = 0x00000000;
+	g_Hci_Status.remote_class_of_device = *(buffer) | (*(buffer + 1)) << 8 | (*(buffer + 2)) << 16;
+	buffer += 3;
+	g_Hci_Status.remote_link_type = *(buffer);
+	switch(*(buffer)) {
+		case 0x00:  //SCO connection requested
+			
+			break;
+		case 0x01:  //ACL connection requested
+			Send_HCI_Command_Accept_Connection_Request();
+			break;
+		case 0x02:  //eSCO connection requested
+			
+			break;
+		default:
+			break;
+	}
+}
 void HCI_Command_Complete_Event_Handle(uint8_t *buffer, uint32_t len)
 {
 	uint8_t Num_HCI_Command_Packets = *buffer++;
@@ -414,6 +457,7 @@ static void Send_HCI_Command_Write_Scan_Enable()
 void bt_stack_init(void)
 {
 	HCI_Event_Fun[HCI_Command_Complete_Event] = HCI_Command_Complete_Event_Handle;
+	HCI_Event_Fun[HCI_Connection_Request_Event] = HCI_Connection_Request_Event_Handle;
 	g_Hci_Status.host_sco_data_packet_length = 255;
 	g_Hci_Status.host_acl_data_packet_length = 1024;
 	g_Hci_Status.host_total_num_acl_data_packets = 20;

@@ -159,6 +159,13 @@ typedef struct {
 
 typedef struct {
 	uint8_t  loacl_addr[6];
+	
+	/*remote device info*/
+	uint8_t  remote_addr[6];
+	uint32_t remote_class_of_device;
+	uint8_t  remote_link_type;
+	
+	
 	HCI_Support_Feature hci_support_feature;// 8 byte
 	uint8_t  sco_data_packet_length;
 	uint16_t acl_data_packet_length;
