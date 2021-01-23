@@ -9,10 +9,32 @@ class Pyqt5_Serial(QMainWindow, Ui_MainWindow):
     super(Pyqt5_Serial,self).__init__()
     self.setupUi(self)
     self.init()
+    self.comboBox_2.setCurrentIndex(13)
+    self.update_serial()
   def init(self):
-    self.pushButton_3.clicked.connect(self.port_check)
-  def port_check(self):
-    print("asdasd\r\n")
+    self.comboBox.clicked.connect(self.update_serial)
+    self.pushButton_3.clicked.connect(self.click_ev)
+  def click_ev(self,enable):
+    print(enable)
+    if enable == True:
+      self.pushButton_3.setText(r"关闭串口")
+      self.pushButton_3.setStyleSheet(
+        "color:red;"
+      )
+    else:
+      self.pushButton_3.setText(r"打开串口")
+      self.pushButton_3.setStyleSheet(
+        "color:black;"
+      )
+  def update_serial(self): # update serial
+    self.Com_Dict = {}
+    port_list = list(serial.tools.list_ports.comports())
+    self.comboBox.clear()
+    for port in port_list:
+      self.Com_Dict["%s" % port[0]] = "%s" % port[1]
+      self.comboBox.addItem(port[0])
+    if len(self.Com_Dict) == 0:
+      self.comboBox.clear()
 
 if __name__ == '__main__':
   myapp = QApplication(sys.argv)

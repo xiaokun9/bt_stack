@@ -9,6 +9,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from MycomboBox import MycomboBox
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -33,7 +35,7 @@ class Ui_MainWindow(object):
         self.splitter.setObjectName("splitter")
         self.label = QtWidgets.QLabel(self.splitter)
         self.label.setObjectName("label")
-        self.comboBox = QtWidgets.QComboBox(self.splitter)
+        self.comboBox = MycomboBox(self.splitter)
         self.comboBox.setObjectName("comboBox")
         self.layoutWidget = QtWidgets.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")
@@ -43,7 +45,7 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.layoutWidget)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
-        self.comboBox_2 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_2 = MycomboBox(self.layoutWidget)
         self.comboBox_2.setObjectName("comboBox_2")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
@@ -71,7 +73,7 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.layoutWidget)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
-        self.comboBox_3 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_3 = MycomboBox(self.layoutWidget)
         self.comboBox_3.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContentsOnFirstShow)
         self.comboBox_3.setObjectName("comboBox_3")
         self.comboBox_3.addItem("")
@@ -81,7 +83,7 @@ class Ui_MainWindow(object):
         self.label_4 = QtWidgets.QLabel(self.layoutWidget)
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 2, 0, 1, 1)
-        self.comboBox_4 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_4 = MycomboBox(self.layoutWidget)
         self.comboBox_4.setObjectName("comboBox_4")
         self.comboBox_4.addItem("")
         self.comboBox_4.addItem("")
@@ -91,7 +93,7 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.layoutWidget)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 3, 0, 1, 1)
-        self.comboBox_5 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_5 = MycomboBox(self.layoutWidget)
         self.comboBox_5.setObjectName("comboBox_5")
         self.comboBox_5.addItem("")
         self.comboBox_5.addItem("")
