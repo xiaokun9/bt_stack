@@ -179,7 +179,7 @@ class Ui_MainWindow(object):
         self.comboBox_4.setItemText(2, _translate("MainWindow", "6"))
         self.comboBox_4.setItemText(3, _translate("MainWindow", "5"))
         self.label_5.setText(_translate("MainWindow", "校验位"))
-        self.comboBox_5.setItemText(0, _translate("MainWindow", "None"))
+        self.comboBox_5.setItemText(0, _translate("MainWindow", "N"))
         self.comboBox_5.setItemText(1, _translate("MainWindow", "Old"))
         self.comboBox_5.setItemText(2, _translate("MainWindow", "Even"))
         self.label_6.setText(_translate("MainWindow", "串口操作"))
