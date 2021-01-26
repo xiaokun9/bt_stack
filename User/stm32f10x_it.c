@@ -200,7 +200,8 @@ void USART1_IRQHandler(void)
     } 
 		
 	xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
-	__nop(); 
+	__nop();
+	printf("%c%c",0xFF,0xFF);
 } 
 void USART2_IRQHandler(void)
 {

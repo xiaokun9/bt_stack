@@ -6,6 +6,7 @@ import serial
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QApplication, QMainWindow, QComboBox, QMessageBox
 from pc import *
+import datetime
 
 ser = serial.Serial()
 
@@ -17,7 +18,9 @@ class MyThread(QThread):  # 线程1
     while(1):
       print(round(time.time()) * 1000)
       arr = ser.read_until(expected = b'\xFF\xFF')
+      print(len(arr),len(arr),"\x00000001","\x00000000",int(round(time.time() * 1000000)))
       print(arr)
+
 
 
 class Pyqt5_Serial(QMainWindow, Ui_MainWindow):
@@ -29,10 +32,21 @@ class Pyqt5_Serial(QMainWindow, Ui_MainWindow):
     self.update_serial()
     #self.ser = serial.Serial()
     #self.ser.read_until()
+    self.fd = None
   def init(self):
     self.comboBox.clicked.connect(self.update_serial)
     self.pushButton_3.clicked.connect(self.click_ev)
     self.write_thread = MyThread()
+    self.checkBox_4.stateChanged.connect(self.openbtsnoop)
+  def openbtsnoop(self,enable):
+    _time = time.strftime("%Y_%m_%d_%H_%M_%S.log", time.localtime())
+    print(_time)
+    if (enable == 2) :
+      self.fd = open(_time,"wb+")
+      self.fd.write(b"\x62\x74\x73\x6e\x6f\x6f\x70\x00\x00\x00\x00\x01\x00\x00\x03\xea") #btsnoop
+    else:
+      self.fd.close()
+    print(enable)
 
   def click_ev(self,enable):
     if enable == True:
