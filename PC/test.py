@@ -7,19 +7,52 @@ from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QApplication, QMainWindow, QComboBox, QMessageBox
 from pc import *
 import datetime
+import struct
+from enum import Enum
 
 ser = serial.Serial()
+fd = None
 
+class Hci_Filed(Enum):
+  HCI_CMD_HOST_TO_CONTROL = 0x02
+  HCI_CMD_CONTROL_TO_HOST = 0x03
+  HCI_ACL_HOST_TO_CONTROL = 0x00
+  HCI_ACL_CONTROL_TO_HOST = 0x01
+  HCI_SCO_HOST_TO_CONTROL = 0x00
+  HCI_SCO_CONTROL_TO_HOST = 0x01
 class MyThread(QThread):  # 线程1
   def __init__(self):
     super().__init__()
 
   def run(self):
+    global fd
     while(1):
-      print(round(time.time()) * 1000)
       arr = ser.read_until(expected = b'\xFF\xFF')
-      print(len(arr),len(arr),"\x00000001","\x00000000",int(round(time.time() * 1000000)))
+      print(len(arr))
+      print("wwwwwwwww")
       print(arr)
+      if arr[0] == 0x04:
+        continue
+        fd.write(struct.pack(">I", len(arr) - 2))
+        fd.write(struct.pack(">I", len(arr) - 2))
+        fd.write(struct.pack(">I", Hci_Filed.HCI_CMD_CONTROL_TO_HOST.value))
+      elif arr[0] == 0x01:
+        continue
+        fd.write(struct.pack(">I", len(arr) - 2))
+        fd.write(struct.pack(">I", len(arr) - 2))
+        fd.write(struct.pack(">I", Hci_Filed.HCI_CMD_HOST_TO_CONTROL.value))
+      else:
+        pass
+      if fd == None:
+        continue
+      #print(len(arr),len(arr),"\x00000001","\x00000000",int(round(time.time() * 1000000)))
+      #fd.write(struct.pack(">I",len(arr)-2))
+      #fd.write(struct.pack(">I", len(arr) - 2))
+      #
+      fd.write(struct.pack(">I", 0))
+      fd.write(struct.pack(">Q", round(time.time() * 1000000)))
+      fd.write(arr[:-2])
+
 
 
 
@@ -32,20 +65,21 @@ class Pyqt5_Serial(QMainWindow, Ui_MainWindow):
     self.update_serial()
     #self.ser = serial.Serial()
     #self.ser.read_until()
-    self.fd = None
+
   def init(self):
     self.comboBox.clicked.connect(self.update_serial)
     self.pushButton_3.clicked.connect(self.click_ev)
     self.write_thread = MyThread()
     self.checkBox_4.stateChanged.connect(self.openbtsnoop)
   def openbtsnoop(self,enable):
+    global fd
     _time = time.strftime("%Y_%m_%d_%H_%M_%S.log", time.localtime())
     print(_time)
     if (enable == 2) :
-      self.fd = open(_time,"wb+")
-      self.fd.write(b"\x62\x74\x73\x6e\x6f\x6f\x70\x00\x00\x00\x00\x01\x00\x00\x03\xea") #btsnoop
+      fd= open(_time,"wb+")
+      fd.write(b"\x62\x74\x73\x6e\x6f\x6f\x70\x00\x00\x00\x00\x01\x00\x00\x03\xea") #btsnoop
     else:
-      self.fd.close()
+      fd.close()
     print(enable)
 
   def click_ev(self,enable):
