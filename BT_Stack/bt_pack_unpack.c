@@ -13,6 +13,7 @@ void Send_HCI_Command_Packet(HCI_Command_Packet_Struct data)
 		Usart_SendByte( USART1, data.OGF<<2 | data.OCF>>8);
 		Usart_SendByte( USART1, data.LEN);
 		Usart_SendArray( USART1,data.DATA,data.LEN);
+		printf("%c%c",0xFF,0xFF);
 }
 
 // HCI_Accept_Connection_Request
