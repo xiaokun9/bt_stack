@@ -146,7 +146,7 @@ void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch)
 	USART_SendData(pUSARTx,ch);	
 	/* 等待发送数据寄存器为空 */
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);
-	printf("%c",ch);
+	//printf("%c",ch);
 }
 
 /****************** 发送8位的数组 ************************/
@@ -158,7 +158,7 @@ void Usart_SendArray( USART_TypeDef * pUSARTx, uint8_t *array, uint16_t num)
   {
 	    /* 发送一个字节数据到USART */
 	    Usart_SendByte(pUSARTx,array[i]);
-		  printf("%c",array[i]);
+		//  printf("%c",array[i]);
   
   }
 	/* 等待发送完成 */

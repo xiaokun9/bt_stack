@@ -95,12 +95,12 @@ int main(void)
   **********************************************************************/
 static void AppTaskCreate(void)
 {
-  BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+ // BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
   
   taskENTER_CRITICAL();           //进入临界区
   
   /* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
+  xTaskCreate((TaskFunction_t )LED1_Task, /* 任务入口函数 */
                         (const char*    )"LED1_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
@@ -110,7 +110,7 @@ static void AppTaskCreate(void)
 //    printf("创建LED1_Task任务成功!\r\n");
   
 	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
+  xTaskCreate((TaskFunction_t )LED2_Task, /* 任务入口函数 */
                         (const char*    )"LED2_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
@@ -119,7 +119,7 @@ static void AppTaskCreate(void)
 //  if(pdPASS == xReturn)
 //    printf("创建LED2_Task任务成功!\r\n");
 	/* 创建LED_Task任务 */
-  xReturn = xTaskCreate((TaskFunction_t )LED3_Task, /* 任务入口函数 */
+  xTaskCreate((TaskFunction_t )LED3_Task, /* 任务入口函数 */
                         (const char*    )"LED3_Task",/* 任务名字 */
                         (uint16_t       )512,   /* 任务栈大小 */
                         (void*          )NULL,	/* 任务入口函数参数 */
@@ -180,6 +180,7 @@ static void LED2_Task(void* parameter)
 static void LED3_Task(void* parameter)
 {	
 		bt_stack_init();
+		printf("%s","BTH reset succeed\r\n");
     while (1)
     {
 				if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
@@ -188,17 +189,29 @@ static void LED3_Task(void* parameter)
         //vTaskDelay(500);   /* 延时500个tick */
 				uint8_t* temp_addr = receivebuf;
 				uint8_t temp_char = *temp_addr;
+				printf("UART RECV data type:%d\r\n",temp_char);
 				if (temp_char == HCI_EVENT_PACK) { //HCI EVENT
 					temp_addr =temp_addr + 1;
 					uint8_t index = *(temp_addr);
+					printf("UART RECV data index:0x%02x\r\n",index);
 					temp_addr =temp_addr + 1;
 					if (index >0 && index < 100) {
 						
 						HCI_Event_Handle_Index(index,temp_addr + 1, *(temp_addr));
 					}
 					//
-					HCI_Cmd_Exec_Next();
-				}
+					
+					HCI_Cmd_Exec_Next();//vendor cmd
+				} else if(temp_char == HCI_ACL_DATA_PACK) { // HCI_ACL_DATA_PACK
+				    HCI_ACL_DATA_TO_L2CAP(temp_addr+1);
+                    printf("HCI_ACL_DATA_PACK\r\n");
+                } else if(temp_char == HCI_CMD_PACK) { // HCI_CMD_PACK
+                    printf("HCI_CMD_PACK\r\n");
+                } else if(temp_char == HCI_SCO_DATA_PACK) { // HCI_SCO_DATA_PACK
+                    printf("HCI_SCO_DATA_PACK\r\n");
+                } else if(temp_char == HCI_ISO_DATA_PACK) { // HCI_ISO_DATA_PACK
+                    printf("HCI_ISO_DATA_PACK\r\n");
+                }
         LED3_OFF;     
         //vTaskDelay(500);   /* 延时500个tick */	
 				//receivebuf

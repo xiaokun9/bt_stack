@@ -652,6 +652,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\BT_Stack\bt_pack_unpack.h</FilePath>
             </File>
+            <File>
+              <FileName>bt_l2cap_pack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BT_Stack\bt_l2cap_pack.c</FilePath>
+            </File>
+            <File>
+              <FileName>bt_l2cap_pack.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\BT_Stack\bt_l2cap_pack.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

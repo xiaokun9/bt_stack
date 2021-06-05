@@ -164,7 +164,7 @@ typedef struct {
 	uint8_t  remote_addr[6];
 	uint32_t remote_class_of_device;
 	uint8_t  remote_link_type;
-	
+    uint8_t  remote_link_encryption_type;
 	
 	HCI_Support_Feature hci_support_feature;// 8 byte
 	uint8_t  sco_data_packet_length;
@@ -183,6 +183,9 @@ typedef struct {
 	uint8_t LMP_PAL_Version;
 	uint16_t Manufacturer_Name;
 	uint16_t LMP_PAL_Subversion;
+
+    //ACL
+    uint16_t ACL_Connection_Handle;
 	
 }HCI_STATUS_Struct;
 

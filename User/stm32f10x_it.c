@@ -189,7 +189,7 @@ void USART1_IRQHandler(void)
 		for (i = 0;i < temp;i++)
 		{
 			//Data_Receive_Usart = receivebuf[i];
-			printf( "%c", receivebuf[i] );
+			//printf( "%c", receivebuf[i] );
 		  	//Æô¶¯´®¿Ú×´Ì¬»ú
 		}
 	
@@ -201,7 +201,7 @@ void USART1_IRQHandler(void)
 		
 	xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
 	__nop();
-	printf("%c%c",0xFF,0xFF);
+	//printf("%c%c",0xFF,0xFF);
 } 
 void USART2_IRQHandler(void)
 {
