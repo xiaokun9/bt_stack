@@ -205,11 +205,14 @@ static void LED3_Task(void* parameter)
 				} else if(temp_char == HCI_ACL_DATA_PACK) { // HCI_ACL_DATA_PACK
 				    HCI_ACL_DATA_TO_L2CAP(temp_addr+1);
                     printf("HCI_ACL_DATA_PACK\r\n");
-                } else if(temp_char == HCI_CMD_PACK) { // HCI_CMD_PACK
+                } 
+					else if(temp_char == HCI_CMD_PACK) { // HCI_CMD_PACK
                     printf("HCI_CMD_PACK\r\n");
-                } else if(temp_char == HCI_SCO_DATA_PACK) { // HCI_SCO_DATA_PACK
+                } 
+					else if(temp_char == HCI_SCO_DATA_PACK) { // HCI_SCO_DATA_PACK
                     printf("HCI_SCO_DATA_PACK\r\n");
-                } else if(temp_char == HCI_ISO_DATA_PACK) { // HCI_ISO_DATA_PACK
+                } 
+					else if(temp_char == HCI_ISO_DATA_PACK) { // HCI_ISO_DATA_PACK
                     printf("HCI_ISO_DATA_PACK\r\n");
                 }
         LED3_OFF;     

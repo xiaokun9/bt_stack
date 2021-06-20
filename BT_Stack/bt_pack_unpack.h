@@ -1,6 +1,7 @@
 #include "stm32f10x.h"
 #include <stdio.h>
 #include "bt_l2cap_pack.h"
+#include "bsp_usart.h"
 
 typedef enum {
 	HCI_CMD_PACK = 0x01,

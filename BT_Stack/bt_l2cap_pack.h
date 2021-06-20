@@ -32,17 +32,6 @@ typedef enum{
 	L2CAP_CREDIT_BASED_RECONFIGURE_RSP = 0x1A,
 }L2CAP_SIGNALING_PACKET_TYPE;
 
-typedef struct {
-	uint8_t Code;
-	uint8_t Identifier;
-	uint16_t Length;
-	uint16_t Destination_CID;
-	uint16_t Source_CID;
-	uint16_t Result;
-	uint16_t Status;
-}L2CAP_CONNECTION_RSP_STR;
-
-
 typedef enum{
 	l2cap_channel_Null = 0x0000,
 	l2cap_channel_Signaling = 0x0001,
@@ -57,11 +46,20 @@ typedef struct {
 	uint16_t l2cap_data_len;
 	uint16_t l2cap_channel_id;
 	uint8_t *data;
-}L2CAP_HEADER_B;
-
-typedef struct {
-	uint16_t l2cap_data_len;
-	uint16_t l2cap_PSM;
-	uint8_t *data;
 }L2CAP_HEADER_G;
 
+typedef struct {
+	uint8_t Identifier;
+	uint16_t l2cap_PSM;
+	uint16_t remote_cid;
+}L2CAP_HEADER_B;
+
+
+typedef struct {
+	uint16_t l2cap_handle;
+	uint8_t l2cap_acl_data_pb_flag;
+	uint8_t l2cap_acl_data_bc_flag;
+	uint16_t l2cap_len;
+	uint16_t l2cap_parameter_len;
+	uint16_t cid;
+}L2CAP_HEADER_INFO;
