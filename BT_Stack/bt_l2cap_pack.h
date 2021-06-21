@@ -63,3 +63,40 @@ typedef struct {
 	uint16_t l2cap_parameter_len;
 	uint16_t cid;
 }L2CAP_HEADER_INFO;
+
+
+typedef enum{
+	l2cap_psm_sdp = 0x0001,
+	l2cap_psm_udp = 0x0002,
+	l2cap_psm_RFCOMM = 0x0003,
+	l2cap_psm_tcp = 0x0004,
+	l2cap_psm_tcs_bin,
+	l2cap_psm_tcs_at,
+	l2cap_psm_att = 0x0007,
+	l2cap_psm_obex = 0x0008,
+	l2cap_psm_ip,
+	l2cap_psm_ftp = 0x000a,
+	l2cap_psm_http,
+	l2cap_psm_wsp,
+	l2cap_psm_bnep = 0x000f,
+	l2cap_psm_upnp = 0x0010,
+	l2cap_psm_hidp = 0x0011,
+	l2cap_psm_AVCTP = 0x0017,
+	l2cap_psm_AVDTP = 0x0019,
+	l2cap_psm_CMTP = 0x001b,
+	l2cap_psm_L2CAP = 0x0100,
+}l2cap_psm_type;
+
+#define l2cap_base_cid 0x0040
+
+typedef struct {
+	uint8_t used;
+	
+}local_cid_str;
+
+typedef struct {
+	uint16_t local_cid;
+	uint16_t remote_cid;
+	uint16_t psm;
+	
+}L2CAP_LINK_INFO_STR;

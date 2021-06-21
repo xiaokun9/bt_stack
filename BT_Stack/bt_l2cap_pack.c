@@ -1,5 +1,30 @@
 #include "bt_l2cap_pack.h"
 
+#define local_cid_change_num 16
+
+local_cid_str local_cid[local_cid_change_num]={0};
+
+uint16_t l2cap_get_local_cid()
+{
+	for(int i = 0;i < local_cid_change_num;i++) {
+			if(local_cid[i].used == 0) {
+				local_cid[i].used = 1;
+				return l2cap_base_cid + i;
+			}
+	}
+	return -1;//fail
+}
+
+void l2cap_clear_local_cid(uint16_t cid)
+{
+	uint16_t temp_cid = cid - l2cap_base_cid;
+	if(temp_cid < 0 || temp_cid >= local_cid_change_num) return;
+	for(int i=0;i<local_cid_change_num;i++) {
+		if(i == temp_cid && local_cid[i].used == 1) {
+			local_cid[i].used =0;
+		}
+	}
+}
 
 void L2CAP_CONNECTION_REQ_HANDER(L2CAP_HEADER_INFO *info,uint8_t Identifier,uint8_t* data)
 {
@@ -11,15 +36,21 @@ void L2CAP_CONNECTION_REQ_HANDER(L2CAP_HEADER_INFO *info,uint8_t Identifier,uint
 	l2cap_info.Identifier = Identifier;
 	l2cap_info.l2cap_PSM = PSM;
 	l2cap_info.Identifier = Source_CID;
-	
-//	L2CAP_CONNECTION_RSP_STR send_data;
-//	send_data.Code = L2CAP_CONNECTION_RSP;
-//	send_data.Identifier = Identifier;
-//	send_data.Source_CID = Source_CID;
-//	send_data.Length = 0x0008;
-//	send_data.Destination_CID = 0x0040;//to do
-//	send_data.Result = 0x0000;
-//	send_data.Status = 0x0000;
+
+		//L2CAP_CONNECTION_RSP
+		uint8_t array[12]={0};
+		array[0] = 0x03;//Code=0x03
+		array[1] = Identifier;//Identifier
+		array[2] = 0x08;
+		array[3] = 0x00;//length
+		array[4] = 0x00;//dcid
+		array[5] = 0x00;
+		array[6] = *data;//scid
+		array[7] = *(data+1);
+		array[8] = 0x00;//Result->succeed
+		array[9] = 0x00;
+		array[10] = 0x00;//Status->No further information available
+		array[11] = 0x00;
 }
 
 void l2cap_Signaling_data_handler(L2CAP_HEADER_INFO *info,uint8_t* data)
