@@ -1,5 +1,6 @@
 #include "stm32f10x.h"
 #include <stdio.h>
+#include "bsp_usart.h"
 
 void HCI_ACL_DATA_TO_L2CAP(uint8_t* buffer);
 
@@ -90,13 +91,14 @@ typedef enum{
 #define l2cap_base_cid 0x0040
 
 typedef struct {
-	uint8_t used;
-	
-}local_cid_str;
-
-typedef struct {
 	uint16_t local_cid;
 	uint16_t remote_cid;
 	uint16_t psm;
 	
 }L2CAP_LINK_INFO_STR;
+
+typedef struct {
+	uint8_t used;
+	L2CAP_LINK_INFO_STR info;
+}local_cid_str;
+

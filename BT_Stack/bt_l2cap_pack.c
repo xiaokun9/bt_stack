@@ -4,6 +4,8 @@
 
 local_cid_str local_cid[local_cid_change_num]={0};
 
+void l2cap_data_to_hci_acl_data(L2CAP_HEADER_INFO *info,uint16_t len,uint8_t* buffer);
+
 uint16_t l2cap_get_local_cid()
 {
 	for(int i = 0;i < local_cid_change_num;i++) {
@@ -12,13 +14,13 @@ uint16_t l2cap_get_local_cid()
 				return l2cap_base_cid + i;
 			}
 	}
-	return -1;//fail
+	return 0xFF;//fail
 }
 
 void l2cap_clear_local_cid(uint16_t cid)
 {
 	uint16_t temp_cid = cid - l2cap_base_cid;
-	if(temp_cid < 0 || temp_cid >= local_cid_change_num) return;
+	if(temp_cid >= local_cid_change_num) return;
 	for(int i=0;i<local_cid_change_num;i++) {
 		if(i == temp_cid && local_cid[i].used == 1) {
 			local_cid[i].used =0;
@@ -28,29 +30,29 @@ void l2cap_clear_local_cid(uint16_t cid)
 
 void L2CAP_CONNECTION_REQ_HANDER(L2CAP_HEADER_INFO *info,uint8_t Identifier,uint8_t* data)
 {
-	uint16_t PSM = *data | *(data + 1)<<8;
-	data += sizeof(uint16_t);
-	uint16_t Source_CID = *data | *(data + 1)<<8;
+		uint16_t PSM = *data | *(data + 1)<<8;
+		data += sizeof(uint16_t);
+		uint16_t Source_CID = *data | *(data + 1)<<8;
 
-	L2CAP_HEADER_B l2cap_info;
-	l2cap_info.Identifier = Identifier;
-	l2cap_info.l2cap_PSM = PSM;
-	l2cap_info.Identifier = Source_CID;
-
+		uint16_t local_cid_temp = l2cap_get_local_cid();
+		local_cid[local_cid_temp - l2cap_base_cid].info.local_cid = local_cid_temp;
+		local_cid[local_cid_temp - l2cap_base_cid].info.remote_cid = Source_CID;
+		local_cid[local_cid_temp - l2cap_base_cid].info.psm = PSM;
 		//L2CAP_CONNECTION_RSP
 		uint8_t array[12]={0};
 		array[0] = 0x03;//Code=0x03
 		array[1] = Identifier;//Identifier
 		array[2] = 0x08;
 		array[3] = 0x00;//length
-		array[4] = 0x00;//dcid
-		array[5] = 0x00;
+		array[4] = (uint8_t)(local_cid_temp);//dcid
+		array[5] = (uint8_t)(local_cid_temp>>8);
 		array[6] = *data;//scid
 		array[7] = *(data+1);
 		array[8] = 0x00;//Result->succeed
 		array[9] = 0x00;
 		array[10] = 0x00;//Status->No further information available
 		array[11] = 0x00;
+		l2cap_data_to_hci_acl_data(info,12,array);
 }
 
 void l2cap_Signaling_data_handler(L2CAP_HEADER_INFO *info,uint8_t* data)
@@ -104,7 +106,7 @@ void HCI_ACL_DATA_TO_L2CAP(uint8_t* buffer)
 		l2cap_data_handle(&info,buffer);
 }
 
-void l2cap_data_to_hci_acl_data(L2CAP_HEADER_INFO *info,uint16_t len,uint8_t buffer)
+void l2cap_data_to_hci_acl_data(L2CAP_HEADER_INFO *info,uint16_t len,uint8_t* buffer)
 {
 	//1:0~11 bit :Handle
     //2:12~13 bit :PB Flag
@@ -113,4 +115,5 @@ void l2cap_data_to_hci_acl_data(L2CAP_HEADER_INFO *info,uint16_t len,uint8_t buf
     //5:32~ bit :Data
 		uint8_t buff[len];
 		//Usart_SendArray( USART1,data.DATA,data.LEN);
+		Usart_SendArray( USART1,buffer,len);
 }
